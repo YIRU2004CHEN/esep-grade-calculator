@@ -1,9 +1,7 @@
 package esepunittests
 
 type GradeCalculator struct {
-	assignments []Grade
-	exams       []Grade
-	essays      []Grade
+    grades []Grade
 }
 
 type GradeType int
@@ -31,11 +29,9 @@ type Grade struct {
 }
 
 func NewGradeCalculator() *GradeCalculator {
-	return &GradeCalculator{
-		assignments: make([]Grade, 0),
-		exams:       make([]Grade, 0),
-		essays:      make([]Grade, 0),
-	}
+    return &GradeCalculator{
+        grades: make([]Grade, 0),
+    }
 }
 
 func (gc *GradeCalculator) GetFinalGrade() string {
@@ -54,38 +50,57 @@ func (gc *GradeCalculator) GetFinalGrade() string {
 	return "F"
 }
 
+//new
+//append the grade(including 3 types)
 func (gc *GradeCalculator) AddGrade(name string, grade int, gradeType GradeType) {
-	switch gradeType {
-	case Assignment:
-		gc.assignments = append(gc.assignments, Grade{
-			Name:  name,
-			Grade: grade,
-			Type:  Assignment,
-		})
-	case Exam:
-		gc.exams = append(gc.exams, Grade{
-			Name:  name,
-			Grade: grade,
-			Type:  Exam,
-		})
-	case Essay:
-		gc.essays = append(gc.essays, Grade{
-			Name:  name,
-			Grade: grade,
-			Type:  Essay,
-		})
-	}
+    gc.grades = append(gc.grades, Grade{
+        Name:  name,
+        Grade: grade,
+        Type:  gradeType,
+    })
 }
 
+//new
 func (gc *GradeCalculator) calculateNumericalGrade() int {
-	assignment_average := computeAverage(gc.assignments)
-	exam_average := computeAverage(gc.exams)
-	essay_average := computeAverage(gc.essays)//fixed here
+	//	initialize the grades
+    assignmentSum, assignmentCount := 0, 0
+    examSum, examCount := 0, 0
+    essaySum, essayCount := 0, 0
 
-	weighted_grade := float64(assignment_average)*.5 + float64(exam_average)*.35 + float64(essay_average)*.15
+    for _, g := range gc.grades {
+        switch g.Type {
+        case Assignment:
+            assignmentSum += g.Grade
+            assignmentCount++
+        case Exam:
+            examSum += g.Grade
+            examCount++
+        case Essay:
+            essaySum += g.Grade
+            essayCount++
+        }
+    }
 
-	return int(weighted_grade)
+	//get each grade's average, count it 0 if no grade
+    assignmentAvg := 0
+    if assignmentCount > 0 {
+        assignmentAvg = assignmentSum / assignmentCount
+    }
+
+    examAvg := 0
+    if examCount > 0 {
+        examAvg = examSum / examCount
+    }
+
+    essayAvg := 0
+    if essayCount > 0 {
+        essayAvg = essaySum / essayCount
+    }
+
+    weighted := float64(assignmentAvg)*0.5 + float64(examAvg)*0.35 + float64(essayAvg)*0.15
+    return int(weighted)
 }
+
 
 func computeAverage(grades []Grade) int {
 	if len(grades) == 0 {
