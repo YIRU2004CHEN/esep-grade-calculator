@@ -108,3 +108,25 @@ func TestComputeAverageEmptyList(t *testing.T) {
     }
 }
 
+
+// test for pass/fail feature
+//assuming 60 is passing grade
+func TestGetPassFail(t *testing.T) {
+    // test pass
+    gradeCalculator := NewGradeCalculator()
+    gradeCalculator.AddGrade("assignment", 70, Assignment)
+    gradeCalculator.AddGrade("exam", 80, Exam)
+    gradeCalculator.AddGrade("essay", 60, Essay)
+    if gradeCalculator.GetPassFail() != "Pass" {
+        t.Errorf("Expected Pass, got %s", gradeCalculator.GetPassFail())
+    }
+
+    // test fail
+    gradeCalculator = NewGradeCalculator()
+    gradeCalculator.AddGrade("assignment", 50, Assignment)
+    gradeCalculator.AddGrade("exam", 40, Exam)
+    gradeCalculator.AddGrade("essay", 30, Essay)
+    if gradeCalculator.GetPassFail() != "Fail" {
+        t.Errorf("Expected Fail, got %s", gradeCalculator.GetPassFail())
+    }
+}
